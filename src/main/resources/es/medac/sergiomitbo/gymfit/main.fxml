@@ -122,11 +122,107 @@
          <padding>
             <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
          </padding>
+
+         <!-- Formulario de alta -->
          <VBox prefWidth="580.0" spacing="12.0" styleClass="tarjeta">
             <Label styleClass="titulo" text="Alta de socio" />
+            <Label styleClass="ayuda" text="Rellena los datos del nuevo socio. Los campos con * son obligatorios." />
+
+            <GridPane hgap="12.0" vgap="12.0">
+               <columnConstraints>
+                  <ColumnConstraints minWidth="150.0" prefWidth="150.0" />
+                  <ColumnConstraints hgrow="ALWAYS" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
+
+               <Label text="Nombre *" />
+               <TextField fx:id="txtNombre" promptText="Ej.: Laura" GridPane.columnIndex="1" />
+
+               <Label text="Apellidos *" GridPane.rowIndex="1" />
+               <TextField fx:id="txtApellidos" promptText="Ej.: Gómez Ruiz" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+               <Label text="Fecha de nacimiento *" GridPane.rowIndex="2" />
+               <DatePicker fx:id="dpFechaNacimiento" prefWidth="200.0" promptText="dd/mm/aaaa" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+               <Label text="Sexo" GridPane.rowIndex="3" />
+               <HBox spacing="16.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <RadioButton fx:id="rbMujer" text="Mujer">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="grupoSexo" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="rbHombre" text="Hombre" toggleGroup="$grupoSexo" />
+                  <RadioButton fx:id="rbOtro" text="Otro / prefiero no decirlo" toggleGroup="$grupoSexo" />
+               </HBox>
+
+               <Label text="Provincia" GridPane.rowIndex="4" />
+               <ComboBox fx:id="cbProvincia" prefWidth="260.0" promptText="Elige una provincia" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+               <Label text="Tipo de cuota *" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+               <FlowPane hgap="16.0" vgap="8.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <RadioButton text="Básica">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="grupoCuota" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton text="Plus" toggleGroup="$grupoCuota" />
+                  <RadioButton text="Premium" toggleGroup="$grupoCuota" />
+                  <RadioButton text="Joven (hasta 25 años)" toggleGroup="$grupoCuota" />
+                  <RadioButton text="Senior (65 años o más)" toggleGroup="$grupoCuota" />
+               </FlowPane>
+
+               <Label text="Clases" GridPane.rowIndex="6" GridPane.valignment="TOP" />
+               <FlowPane fx:id="panelClases" hgap="16.0" vgap="8.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                  <CheckBox text="Spinning" />
+                  <CheckBox text="Yoga" />
+                  <CheckBox text="Pilates" />
+                  <CheckBox text="Zumba" />
+                  <CheckBox text="Body pump" />
+                  <CheckBox text="Crossfit" />
+                  <CheckBox text="Natación" />
+                  <CheckBox text="Boxeo" />
+               </FlowPane>
+
+               <Label text="IBAN" GridPane.rowIndex="7" />
+               <TextField fx:id="txtIban" promptText="ES00 0000 0000 0000 0000 0000 (opcional)" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            </GridPane>
+
+            <!-- Mensaje de error (oculto hasta que haga falta) -->
+            <HBox fx:id="cajaError" managed="false" spacing="10.0" styleClass="mensaje-error" visible="false">
+               <SVGPath content="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" styleClass="icono-peligro" />
+               <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                  <Label fx:id="lblErrorTitulo" minHeight="-Infinity" styleClass="texto-error-titulo" wrapText="true" />
+                  <Label fx:id="lblErrorTexto" minHeight="-Infinity" wrapText="true" />
+               </VBox>
+            </HBox>
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <Button onAction="#limpiarFormulario" styleClass="boton-peligro" text="Limpiar formulario">
+                  <tooltip><Tooltip text="Borra lo escrito en el formulario (pide confirmación)" /></tooltip>
+               </Button>
+               <Region HBox.hgrow="ALWAYS" />
+               <Button cancelButton="true" onAction="#cancelar" text="Cancelar" />
+               <Button defaultButton="true" onAction="#darDeAlta" styleClass="boton-principal" text="Dar de alta">
+                  <tooltip><Tooltip text="Guardar el nuevo socio (Ctrl+Intro)" /></tooltip>
+               </Button>
+            </HBox>
          </VBox>
+
+         <!-- Tabla de socios -->
          <VBox spacing="12.0" styleClass="tarjeta" HBox.hgrow="ALWAYS">
             <Label styleClass="titulo" text="Socios registrados" />
+            <Label styleClass="ayuda" text="(pendiente: tabla de socios)" />
          </VBox>
       </HBox>
    </center>
