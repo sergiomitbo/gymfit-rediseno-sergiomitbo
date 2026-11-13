@@ -1,0 +1,138 @@
+/*
+ * Paleta (4 colores):
+ *   Azul GymFit  #1F5F8B  -> títulos, iconos, botón principal, barra de estado
+ *   Fondo        #F3F5F7  -> fondo de la ventana (las tarjetas van en blanco)
+ *   Texto        #222B33  -> texto normal
+ *   Rojo aviso   #B03A2E  -> solo errores y acciones destructivas
+ * Tipografía: Segoe UI 14 px (la de Windows), sin mayúsculas ni cursivas de adorno.
+ */
+
+.raiz {
+    -fx-background-color: #F3F5F7;
+    -fx-font-family: "Segoe UI", "Arial";
+    -fx-font-size: 14px;
+}
+
+.label,
+.check-box,
+.radio-button {
+    -fx-text-fill: #222B33;
+}
+
+/* ---------- Menús y barra de herramientas ---------- */
+.menu-bar {
+    -fx-background-color: white;
+}
+
+.tool-bar {
+    -fx-background-color: white;
+    -fx-border-color: #DDE3E8;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 6 12 6 12;
+    -fx-spacing: 6;
+}
+
+.tool-bar .button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #222B33;
+    -fx-graphic-text-gap: 6;
+}
+
+.tool-bar .button:hover {
+    -fx-background-color: #E6EEF4;
+}
+
+.icono {
+    -fx-fill: #1F5F8B;
+}
+
+.icono-peligro {
+    -fx-fill: #B03A2E;
+}
+
+/* ---------- Tarjetas (formulario y tabla) ---------- */
+.tarjeta {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #DDE3E8;
+    -fx-border-radius: 8;
+    -fx-padding: 18;
+}
+
+.titulo {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1F5F8B;
+}
+
+.ayuda {
+    -fx-font-size: 13px;
+    -fx-text-fill: #5A6670;
+}
+
+/* ---------- Botones ---------- */
+.boton-principal {
+    -fx-background-color: #1F5F8B;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 22 8 22;
+    -fx-background-radius: 4;
+}
+
+.boton-principal:hover {
+    -fx-background-color: #174A6D;
+}
+
+.boton-peligro {
+    -fx-background-color: white;
+    -fx-text-fill: #B03A2E;
+    -fx-border-color: #B03A2E;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.boton-peligro:hover {
+    -fx-background-color: #FDECEA;
+}
+
+/* ---------- Mensaje de error ---------- */
+.mensaje-error {
+    -fx-background-color: #FDECEA;
+    -fx-border-color: #B03A2E;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10;
+    -fx-alignment: top-left;
+}
+
+.texto-error-titulo {
+    -fx-font-weight: bold;
+    -fx-text-fill: #B03A2E;
+}
+
+.campo-error {
+    -fx-border-color: #B03A2E;
+    -fx-border-width: 2;
+    -fx-border-radius: 3;
+}
+
+/* ---------- Tabla ---------- */
+.table-view .column-header .label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #1F5F8B;
+}
+
+.opcion-peligro .label {
+    -fx-text-fill: #B03A2E;
+}
+
+/* ---------- Barra de estado ---------- */
+.barra-estado {
+    -fx-background-color: #1F5F8B;
+    -fx-padding: 5 14 5 14;
+}
+
+.barra-estado .label {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+
+<BorderPane prefHeight="800.0" prefWidth="1280.0" styleClass="raiz" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.medac.sergiomitbo.gymfit.MainController">
+
+   <!-- ========== MENÚS Y BARRA DE HERRAMIENTAS ========== -->
+   <top>
+      <VBox>
+         <MenuBar>
+            <Menu mnemonicParsing="true" text="_Archivo">
+               <MenuItem accelerator="Shortcut+N" onAction="#nuevoSocio" text="Nuevo socio" />
+               <MenuItem accelerator="Shortcut+O" onAction="#noDisponible" text="Abrir…" />
+               <MenuItem accelerator="Shortcut+S" onAction="#guardar" text="Guardar" />
+               <SeparatorMenuItem />
+               <MenuItem accelerator="Shortcut+P" onAction="#noDisponible" text="Imprimir…" />
+               <SeparatorMenuItem />
+               <MenuItem accelerator="Shortcut+Q" onAction="#salir" text="Salir" />
+            </Menu>
+            <Menu mnemonicParsing="true" text="_Editar">
+               <MenuItem accelerator="Shortcut+Z" onAction="#deshacer" text="Deshacer" />
+               <SeparatorMenuItem />
+               <MenuItem accelerator="Shortcut+X" onAction="#cortar" text="Cortar" />
+               <MenuItem accelerator="Shortcut+C" onAction="#copiar" text="Copiar" />
+               <MenuItem accelerator="Shortcut+V" onAction="#pegar" text="Pegar" />
+               <SeparatorMenuItem />
+               <MenuItem accelerator="Shortcut+F" onAction="#buscar" text="Buscar socio" />
+            </Menu>
+            <Menu mnemonicParsing="true" text="_Ver">
+               <CheckMenuItem fx:id="chkVerHerramientas" onAction="#cambiarBarraHerramientas" selected="true" text="Barra de herramientas" />
+               <CheckMenuItem fx:id="chkVerEstado" onAction="#cambiarBarraEstado" selected="true" text="Barra de estado" />
+            </Menu>
+            <Menu mnemonicParsing="true" text="_Socios">
+               <MenuItem accelerator="Shortcut+Enter" onAction="#darDeAlta" text="Dar de alta" />
+               <MenuItem accelerator="Shortcut+E" onAction="#editarSocio" text="Editar socio" />
+               <MenuItem accelerator="Shortcut+R" onAction="#renovarCuota" text="Renovar cuota" />
+               <SeparatorMenuItem />
+               <MenuItem onAction="#darDeBaja" text="Dar de baja…" />
+            </Menu>
+            <Menu mnemonicParsing="true" text="A_yuda">
+               <MenuItem accelerator="F1" onAction="#mostrarAyuda" text="Manual de uso" />
+               <MenuItem onAction="#mostrarAtajos" text="Atajos de teclado" />
+               <SeparatorMenuItem />
+               <MenuItem onAction="#acercaDe" text="Acerca de GymFit Manager" />
+            </Menu>
+         </MenuBar>
+
+         <ToolBar fx:id="barraHerramientas">
+            <Button onAction="#nuevoSocio" text="Nuevo">
+               <graphic>
+                  <SVGPath content="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" styleClass="icono" />
+               </graphic>
+               <tooltip><Tooltip text="Nuevo socio (Ctrl+N)" /></tooltip>
+            </Button>
+            <Button onAction="#guardar" text="Guardar">
+               <graphic>
+                  <SVGPath content="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" styleClass="icono" />
+               </graphic>
+               <tooltip><Tooltip text="Guardar cambios (Ctrl+S)" /></tooltip>
+            </Button>
+            <Separator orientation="VERTICAL" />
+            <Button onAction="#editarSocio" text="Editar">
+               <graphic>
+                  <SVGPath content="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" styleClass="icono" />
+               </graphic>
+               <tooltip><Tooltip text="Editar el socio seleccionado (Ctrl+E)" /></tooltip>
+            </Button>
+            <Button onAction="#darDeBaja" text="Dar de baja">
+               <graphic>
+                  <SVGPath content="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" styleClass="icono-peligro" />
+               </graphic>
+               <tooltip><Tooltip text="Dar de baja al socio seleccionado (pide confirmación)" /></tooltip>
+            </Button>
+            <Pane HBox.hgrow="ALWAYS" />
+            <SVGPath content="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" styleClass="icono" />
+            <TextField fx:id="txtBuscar" prefWidth="260.0" promptText="Buscar socio por nombre…">
+               <tooltip><Tooltip text="Escribe parte del nombre para filtrar la tabla (Ctrl+F)" /></tooltip>
+            </TextField>
+            <Separator orientation="VERTICAL" />
+            <Button onAction="#mostrarAyuda" text="Ayuda">
+               <graphic>
+                  <SVGPath content="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" styleClass="icono" />
+               </graphic>
+               <tooltip><Tooltip text="Manual de uso (F1)" /></tooltip>
+            </Button>
+         </ToolBar>
+      </VBox>
+   </top>
+
+   <!-- ========== CONTENIDO: FORMULARIO + TABLA ========== -->
+   <center>
+      <HBox spacing="16.0">
+         <padding>
+            <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+         </padding>
+         <VBox prefWidth="580.0" spacing="12.0" styleClass="tarjeta">
+            <Label styleClass="titulo" text="Alta de socio" />
+         </VBox>
+         <VBox spacing="12.0" styleClass="tarjeta" HBox.hgrow="ALWAYS">
+            <Label styleClass="titulo" text="Socios registrados" />
+         </VBox>
+      </HBox>
+   </center>
+
+   <!-- ========== BARRA DE ESTADO ========== -->
+   <bottom>
+      <HBox fx:id="barraEstado" alignment="CENTER_LEFT" styleClass="barra-estado">
+         <Label fx:id="lblEstado" text="Listo" />
+         <Region HBox.hgrow="ALWAYS" />
+         <Label text="Recepción · GymFit Sevilla" />
+      </HBox>
+   </bottom>
+</BorderPane>
