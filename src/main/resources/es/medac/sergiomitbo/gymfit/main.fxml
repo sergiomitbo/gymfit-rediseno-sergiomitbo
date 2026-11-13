@@ -221,8 +221,40 @@
 
          <!-- Tabla de socios -->
          <VBox spacing="12.0" styleClass="tarjeta" HBox.hgrow="ALWAYS">
-            <Label styleClass="titulo" text="Socios registrados" />
-            <Label styleClass="ayuda" text="(pendiente: tabla de socios)" />
+            <HBox alignment="CENTER_LEFT">
+               <Label styleClass="titulo" text="Socios registrados" />
+               <Region HBox.hgrow="ALWAYS" />
+               <Label fx:id="lblContador" styleClass="ayuda" text="0 socios" />
+            </HBox>
+            <Label styleClass="ayuda" text="Haz clic derecho sobre un socio para ver más opciones." />
+            <TableView fx:id="tablaSocios" onKeyPressed="#teclaEnTabla" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="colNombre" prefWidth="190.0" text="Nombre y apellidos" />
+                  <TableColumn fx:id="colFecha" prefWidth="95.0" text="Fecha nac." />
+                  <TableColumn fx:id="colCuota" prefWidth="80.0" text="Cuota" />
+                  <TableColumn fx:id="colProvincia" prefWidth="85.0" text="Provincia" />
+                  <TableColumn fx:id="colClases" prefWidth="160.0" text="Clases" />
+               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+               <placeholder>
+                  <Label text="Todavía no hay socios dados de alta." />
+               </placeholder>
+               <contextMenu>
+                  <ContextMenu>
+                     <items>
+                        <MenuItem onAction="#verFicha" text="Ver ficha" />
+                        <MenuItem onAction="#editarSocio" text="Editar socio" />
+                        <MenuItem onAction="#duplicarSocio" text="Duplicar" />
+                        <MenuItem onAction="#copiarNombre" text="Copiar nombre" />
+                        <MenuItem onAction="#renovarCuota" text="Renovar cuota" />
+                        <SeparatorMenuItem />
+                        <MenuItem onAction="#darDeBaja" styleClass="opcion-peligro" text="Dar de baja…" />
+                     </items>
+                  </ContextMenu>
+               </contextMenu>
+            </TableView>
          </VBox>
       </HBox>
    </center>
