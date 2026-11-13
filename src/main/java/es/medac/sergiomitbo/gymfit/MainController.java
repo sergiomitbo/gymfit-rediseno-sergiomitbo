@@ -11,6 +11,7 @@ import java.util.Optional;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -24,11 +25,18 @@ import javafx.scene.control.Control;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
@@ -58,7 +66,18 @@ public class MainController {
     @FXML private Label lblErrorTitulo;
     @FXML private Label lblErrorTexto;
 
+    // Tabla
+    @FXML private TableView<Socio> tablaSocios;
+    @FXML private TableColumn<Socio, String> colNombre;
+    @FXML private TableColumn<Socio, String> colFecha;
+    @FXML private TableColumn<Socio, String> colCuota;
+    @FXML private TableColumn<Socio, String> colProvincia;
+    @FXML private TableColumn<Socio, String> colClases;
+    @FXML private Label lblContador;
+
     private final ObservableList<Socio> socios = FXCollections.observableArrayList();
+    private FilteredList<Socio> sociosFiltrados;
+    private Socio socioEditando = null;
 
     @FXML
     private void initialize() {
@@ -85,7 +104,25 @@ public class MainController {
             }
         });
 
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaTexto"));
+        colCuota.setCellValueFactory(new PropertyValueFactory<>("cuota"));
+        colProvincia.setCellValueFactory(new PropertyValueFactory<>("provincia"));
+        colClases.setCellValueFactory(new PropertyValueFactory<>("clasesTexto"));
+
         cargarSociosDeEjemplo();
+        sociosFiltrados = new FilteredList<>(socios, s -> true);
+        tablaSocios.setItems(sociosFiltrados);
+
+        // Buscador de la barra de herramientas
+        txtBuscar.textProperty().addListener((obs, anterior, nuevo) -> {
+            String texto = nuevo.trim().toLowerCase();
+            sociosFiltrados.setPredicate(s -> texto.isEmpty()
+                    || s.getNombreCompleto().toLowerCase().contains(texto));
+            actualizarContador();
+        });
+
+        actualizarContador();
     }
 
     private void cargarSociosDeEjemplo() {
@@ -118,9 +155,18 @@ public class MainController {
                 clasesSeleccionadas(),
                 txtIban.getText().replace(" ", "").toUpperCase());
 
-        socios.add(nuevo);
-        lblEstado.setText(nuevo.getNombreCompleto() + " se ha dado de alta correctamente.");
+        if (socioEditando != null) {
+            socios.set(socios.indexOf(socioEditando), nuevo);
+            lblEstado.setText("Se han guardado los cambios de " + nuevo.getNombreCompleto() + ".");
+            socioEditando = null;
+        } else {
+            socios.add(nuevo);
+            lblEstado.setText(nuevo.getNombreCompleto() + " se ha dado de alta correctamente.");
+        }
+
+        tablaSocios.getSelectionModel().select(nuevo);
         limpiarCampos();
+        actualizarContador();
     }
 
     private boolean validarFormulario() {
@@ -254,6 +300,7 @@ public class MainController {
                 "Se borrará lo que has escrito en el formulario. Los socios ya guardados no se tocan.",
                 "Borrar datos")) {
             limpiarCampos();
+            socioEditando = null;
             lblEstado.setText("Formulario vacío.");
         }
     }
@@ -268,20 +315,124 @@ public class MainController {
         limpiarFormulario();
     }
 
-    // TODO: acciones de la tabla de socios
+    // ===================== ACCIONES SOBRE LA TABLA =====================
+
+    private Socio socioSeleccionado() {
+        Socio s = tablaSocios.getSelectionModel().getSelectedItem();
+        if (s == null) {
+            informar("Ningún socio seleccionado", "Selecciona primero un socio en la tabla de la derecha.");
+        }
+        return s;
+    }
+
+    @FXML
+    private void teclaEnTabla(KeyEvent e) {
+        if (e.getCode() == KeyCode.DELETE) {
+            darDeBaja();
+        }
+    }
+
+    @FXML
+    private void verFicha() {
+        Socio s = socioSeleccionado();
+        if (s != null) {
+            informar("Ficha de " + s.getNombreCompleto(),
+                    "Fecha de nacimiento: " + s.getFechaTexto()
+                    + "\nSexo: " + (s.getSexo() == null ? "—" : s.getSexo())
+                    + "\nProvincia: " + s.getProvincia()
+                    + "\nCuota: " + s.getCuota()
+                    + "\nClases: " + s.getClasesTexto()
+                    + "\nIBAN: " + (s.getIban().isEmpty() ? "pendiente" : s.getIban()));
+        }
+    }
+
     @FXML
     private void editarSocio() {
-        noDisponible();
+        Socio s = socioSeleccionado();
+        if (s != null) {
+            cargarEnFormulario(s);
+            socioEditando = s;
+            lblEstado.setText("Editando a " + s.getNombreCompleto() + ". Pulsa «Dar de alta» para guardar los cambios.");
+        }
+    }
+
+    @FXML
+    private void duplicarSocio() {
+        Socio s = socioSeleccionado();
+        if (s != null) {
+            cargarEnFormulario(s);
+            txtNombre.clear();
+            txtApellidos.clear();
+            socioEditando = null;
+            lblEstado.setText("Datos copiados de " + s.getNombreCompleto() + ". Escribe el nombre del nuevo socio.");
+        }
+    }
+
+    @FXML
+    private void copiarNombre() {
+        Socio s = socioSeleccionado();
+        if (s != null) {
+            ClipboardContent contenido = new ClipboardContent();
+            contenido.putString(s.getNombreCompleto());
+            Clipboard.getSystemClipboard().setContent(contenido);
+            lblEstado.setText("Nombre copiado: " + s.getNombreCompleto());
+        }
     }
 
     @FXML
     private void renovarCuota() {
-        noDisponible();
+        Socio s = socioSeleccionado();
+        if (s != null) {
+            lblEstado.setText("Cuota de " + s.getNombreCompleto() + " renovada hasta el "
+                    + LocalDate.now().plusMonths(1).format(FORMATO) + ".");
+        }
     }
 
     @FXML
     private void darDeBaja() {
-        noDisponible();
+        Socio s = socioSeleccionado();
+        if (s == null) {
+            return;
+        }
+        if (confirmar("Dar de baja", "¿Dar de baja a " + s.getNombreCompleto() + "?",
+                "Su ficha se quitará de la lista de socios. Esta acción no se puede deshacer.",
+                "Dar de baja")) {
+            socios.remove(s);
+            actualizarContador();
+            lblEstado.setText(s.getNombreCompleto() + " se ha dado de baja.");
+        }
+    }
+
+    private void cargarEnFormulario(Socio s) {
+        limpiarCampos();
+        txtNombre.setText(s.getNombre());
+        txtApellidos.setText(s.getApellidos());
+        dpFechaNacimiento.setValue(s.getFechaNacimiento());
+        seleccionarPorTexto(grupoSexo, s.getSexo());
+        cbProvincia.setValue(s.getProvincia().equals("—") ? null : s.getProvincia());
+        for (Toggle t : grupoCuota.getToggles()) {
+            if (((RadioButton) t).getText().startsWith(s.getCuota())) {
+                grupoCuota.selectToggle(t);
+            }
+        }
+        for (Node n : panelClases.getChildren()) {
+            CheckBox c = (CheckBox) n;
+            c.setSelected(s.getClases().contains(c.getText()));
+        }
+        txtIban.setText(s.getIban());
+    }
+
+    private void seleccionarPorTexto(ToggleGroup grupo, String texto) {
+        for (Toggle t : grupo.getToggles()) {
+            if (((RadioButton) t).getText().equals(texto)) {
+                grupo.selectToggle(t);
+            }
+        }
+    }
+
+    private void actualizarContador() {
+        int n = sociosFiltrados == null ? socios.size() : sociosFiltrados.size();
+        lblContador.setText(n == 1 ? "1 socio" : n + " socios");
     }
 
     // ===================== MENÚS =====================
@@ -319,6 +470,8 @@ public class MainController {
     private void copiar() {
         if (txtBuscar.getScene().getFocusOwner() instanceof TextInputControl campo) {
             campo.copy();
+        } else if (tablaSocios.getSelectionModel().getSelectedItem() != null) {
+            copiarNombre();
         }
     }
 
@@ -351,7 +504,7 @@ public class MainController {
         informar("Manual de uso",
                 "Para dar de alta un socio rellena el formulario de la izquierda y pulsa «Dar de alta».\n"
                 + "Los campos con * son obligatorios.\n\n"
-                + "Pendiente: tabla de socios.");
+                + "Para editar, duplicar o dar de baja un socio, haz clic derecho sobre él en la tabla.");
     }
 
     @FXML
